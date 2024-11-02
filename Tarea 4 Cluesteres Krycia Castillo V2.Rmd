@@ -1,0 +1,57 @@
+#Tarea 4 - Clusteres
+Krycia Castillo
+
+```{r}
+library(arules)
+install.packages("genero")
+library(genero)
+install.packages("ggplot2")
+library(ggplot2)
+library(fim4r)
+
+```
+
+
+```{r}
+data0 <- read.csv("C:/Users/lmpgp/Downloads/Kry/db_csv_/MIGRACION_BDP.csv", sep= ',')
+
+#EN la columna de año se sustituyen y eliminan los valores 9999
+data0$PEI5[data0$PEI5 == 9999] <- NA
+
+data0 <- na.omit(data0) 
+
+#Luego de revisar los datos se consideró eliminar del análisis el código de municipio, la zona, num_vivienda, num_hogar y id_migración.
+data2 <- data0[ ,c(1,2,5,9,10,11)]
+
+#Se filtran los datos para considerar unicamente el departamento de Jutiapa y las edades menores a 75 años. 
+dataJu <- subset (data2, DEPARTAMENTO == 22)
+
+dataJu2 <- subset (dataJu, PEI4 < 75)
+
+
+
+```
+
+```{r}
+#Aplicando clusteres la data filtrada dataJu2
+
+cluster <- kmeans(dataJu2, centers=4)
+
+```
+
+```{r}
+#Graficando las edades de acuerdo con el año que han migrado para el departamento de Jutiapa
+ggplot(dataJu2, aes(x =PEI5, y = PEI4, color = as.factor(cluster$cluster)))+
+  geom_point()+
+  geom_point(data = as.data.frame(cluster$centers), aes(x =PEI5, y = PEI4), color = "black", size=4, shape=17)+
+  labs(title = "Departamento Jutiapa (22) - Año VS Edades")+
+  theme_minimal()
+```
+
+
+
+
+
+
+
+
